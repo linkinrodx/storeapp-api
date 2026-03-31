@@ -39,7 +39,7 @@ jobs:
 
       - name: Update Lambda function
         run: |
-          aws lambda update-function-code \f
+          aws lambda update-function-code \
             --function-name ${{ secrets.LAMBDA_FUNCTION_NAME }} \
             --s3-bucket ${{ secrets.S3_BUCKET }} \
             --s3-key storeapp-api \

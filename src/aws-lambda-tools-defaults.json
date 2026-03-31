@@ -2,7 +2,7 @@
   "profile": "",
   "region": "sa-east-1",
   "configuration": "Release",
-  "function-runtime": "dotnet9",
+  "function-runtime": "dotnet10",
   "function-memory-size": 512,
   "function-timeout": 30,
   "function-handler": "StoreApp.Api::StoreApp.Api.LambdaEntryPoint::FunctionHandlerAsync",

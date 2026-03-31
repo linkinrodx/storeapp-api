@@ -5,8 +5,8 @@
   "function-runtime": "dotnet10",
   "function-memory-size": 512,
   "function-timeout": 30,
-  "function-handler": "StoreApp.Api::StoreApp.Api.LambdaEntryPoint::FunctionHandlerAsync",
+  "function-handler": "StoreApp.Api::LambdaEntryPoint.FunctionHandlerAsync",
   "function-name": "storeapp-api",
-  "function-description": "StoreApp REST API — .NET 9 + EF Core + Supabase PostgreSQL",
+  "function-description": "StoreApp REST API — .NET 10 + EF Core + Supabase PostgreSQL",
   "environment-variables": "ASPNETCORE_ENVIRONMENT=Production"
 }

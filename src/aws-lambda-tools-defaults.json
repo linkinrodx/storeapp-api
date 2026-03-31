@@ -5,8 +5,8 @@
   "function-runtime": "dotnet8",
   "function-memory-size": 512,
   "function-timeout": 30,
-  "function-handler": "StoreApp.Api::StoreApp.Api.LambdaEntryPoint::FunctionHandlerAsync",
+  "function-handler": "StoreApp.Api::StoreApp.Api.FunctionUrlEntryPoint::FunctionHandlerAsync",
   "function-name": "storeapp-api",
   "function-description": "StoreApp REST API",
-  "environment-variables": "ASPNETCORE_ENVIRONMENT=Production"
+  "environment-variables": "ASPNETCORE_ENVIRONMENT=Production;AWS_LAMBDA_HTTP_FEATURE_VERSION=V2"
 }

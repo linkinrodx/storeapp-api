@@ -1,12 +1,23 @@
 using Amazon.Lambda.AspNetCoreServer;
+using Amazon.Lambda.Core;
+using Amazon.Lambda.AspNetCoreServer.Internal;
+using Amazon.Lambda.RuntimeSupport;
+using Amazon.Lambda.Serialization.SystemTextJson;
+using System.Text.Json;
 
 namespace StoreApp.Api;
 
-/// <summary>
-/// Entry point for AWS Lambda. The function handler string in aws-lambda-tools-defaults.json
-/// must point to: StoreApp.Api::StoreApp.Api.LambdaEntryPoint::FunctionHandlerAsync
-/// </summary>
 public class LambdaEntryPoint : APIGatewayProxyFunction
+{
+    protected override void Init(IWebHostBuilder builder)
+    {
+        builder.UseStartup<Startup>();
+    }
+
+    protected override void Init(IHostBuilder builder) { }
+}
+
+public class FunctionUrlEntryPoint : Amazon.Lambda.AspNetCoreServer.FunctionUrlAWSCore.LambdaFunctionUrlController
 {
     protected override void Init(IWebHostBuilder builder)
     {

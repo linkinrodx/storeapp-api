@@ -599,3 +599,14 @@ public class WishlistController(AppDbContext db, IMapper mapper) : ControllerBas
         return NoContent();
     }
 }
+
+[ApiController]
+[Route("api/[controller]")]
+public class HealthController : ControllerBase
+{
+    [HttpGet]
+    public async Task<ActionResult> Get()
+    {
+        return Ok(new { status = "healthy", timestamp = DateTimeOffset.UtcNow });
+    }
+}

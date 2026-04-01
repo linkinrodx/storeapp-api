@@ -1,5 +1,5 @@
 {
-  "profile": "",
+  "profile": "default",
   "region": "sa-east-1",
   "configuration": "Release",
   "function-runtime": "dotnet8",

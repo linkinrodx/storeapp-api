@@ -9,5 +9,6 @@ public class LambdaEntryPoint : APIGatewayProxyFunction
         builder.UseStartup<Startup>();
     }
 
+
     protected override void Init(IHostBuilder builder) { }
 }

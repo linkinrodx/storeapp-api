@@ -13,7 +13,7 @@
   <ItemGroup>
     <!-- Lambda -->
     <PackageReference Include="Amazon.Lambda.AspNetCoreServer.Hosting" Version="1.7.3" />
-	<PackageReference Include="Amazon.Lambda.RuntimeSupport" Version="1.12.1" />
+	<PackageReference Include="Amazon.Lambda.RuntimeSupport" Version="1.10.0" />
     <PackageReference Include="Amazon.Lambda.Serialization.SystemTextJson" Version="2.4.4" />
 
     <!-- EF Core + PostgreSQL -->

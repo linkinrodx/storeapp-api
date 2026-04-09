@@ -605,7 +605,7 @@ public class WishlistController(AppDbContext db, IMapper mapper) : ControllerBas
 public class HealthController : ControllerBase
 {
     [HttpGet]
-    public async Task<ActionResult> Get()
+    public ActionResult Get()
     {
         return Ok(new { status = "healthy", timestamp = DateTimeOffset.UtcNow });
     }

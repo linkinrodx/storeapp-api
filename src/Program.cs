@@ -4,13 +4,21 @@ public class Program
 {
     public static void Main(string[] args)
     {
-        CreateHostBuilder(args).Build().Run();
-    }
+        var builder = WebApplication.CreateBuilder(args);
+        builder.Services.AddControllers();
+        builder.Services.AddEndpointsApiExplorer();
+        builder.Services.AddSwaggerGen();
+        var app = builder.Build();
 
-    public static IHostBuilder CreateHostBuilder(string[] args) =>
-        Host.CreateDefaultBuilder(args)
-            .ConfigureWebHostDefaults(webBuilder =>
-            {
-                webBuilder.UseStartup<Startup>();
-            });
+        var enableSwagger = Environment.GetEnvironmentVariable("ENABLE_SWAGGER") == "true";
+
+        if (enableSwagger)
+        {
+            app.UseSwagger();
+            app.UseSwaggerUI();
+        }
+
+        app.MapControllers();
+        app.Run();
+    }
 }

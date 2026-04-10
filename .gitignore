@@ -2,6 +2,7 @@
 bin/
 obj/
 out/
+dist/
 
 # ─── .NET ───────────────────────────────────────────────────────────
 *.user
@@ -13,12 +14,15 @@ out/
 project.lock.json
 project.fragment.lock.json
 artifacts/
+*.csproj.user
 
 # ─── Publish / Lambda deploy ────────────────────────────────────────
 publish/
 *.zip
 *.nupkg
 *.snupkg
+BundleArtifacts/
+PublishOutput/
 
 # ─── Secrets & config sensible ──────────────────────────────────────
 appsettings.Production.json
@@ -27,29 +31,49 @@ appsettings.*.local.json
 **/*.pfx
 **/*.p12
 **/*.key
+**/*.pem
+connectionstrings.json
 
 # ─── Variables de entorno ───────────────────────────────────────────
 .env
 .env.*
 !.env.example
+!.env.local.example
 
 # ─── AWS ────────────────────────────────────────────────────────────
 .aws/credentials
 serverless-output.json
+sam-tests/
+
+# ─── Testing & Coverage ────────────────────────────────────────────────
+TestResults/
+*.coverage
+*.coveragexml
+coverage/
+trx/
+*.trx
 
 # ─── Logs ───────────────────────────────────────────────────────────
 logs/
 *.log
 *.log.*
 
+# ─── Code Analysis ────────────────────────────────────────────────────
+.sonarqube/
+.fxcop/
+roslynator.json.bak
+
 # ─── JetBrains (Rider) ──────────────────────────────────────────────
 .idea/
 *.sln.iml
+**/.idea/
 
 # ─── Visual Studio Code ─────────────────────────────────────────────
 .vscode/
 !.vscode/extensions.json
 !.vscode/settings.json
+!.vscode/launch.json
+!.vscode/tasks.json
 
 # ─── Visual Studio ──────────────────────────────────────────────────
 .vs/
@@ -61,6 +85,10 @@ logs/
 *.cachefile
 *.VC.db
 *.VC.VC.opendb
+.vsfx
+
+# ─── Rider ──────────────────────────────────────────────────────────
+.idea_modules/
 
 # ─── macOS ──────────────────────────────────────────────────────────
 .DS_Store
@@ -68,5 +96,44 @@ logs/
 .LSOverride
 Thumbs.db
 
-# ─── Docker (por si lo agregas después) ─────────────────────────────
+# ─── Windows ────────────────────────────────────────────────────────
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# ─── Git Hooks (Husky) ───────────────────────────────────────────────
+.husky
+
+# ─── Skills & Agent Configuration ───────────────────────────────────────
+.agents/
+.kilocode/
+.kiro/
+.trae/
+skills-lock.json
+
+# ─── Docker ────────────────────────────────────────────────────────────
 docker-compose.override.yml
+*.dockerignore
+
+# ─── Node/npm (si usas herramientas JS) ────────────────────────────────
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# ─── Temporales ───────────────────────────────────────────────────────
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+~*
+*.orig
+
+# ─── Profiling ─────────────────────────────────────────────────────────
+*.ndf
+*.diagsession
+*.etl
+
+# ─── IDE Temporales ───────────────────────────────────────────────────
+*.db-shm
+*.db-wal

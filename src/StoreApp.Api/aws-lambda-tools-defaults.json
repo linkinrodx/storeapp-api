@@ -1,0 +1,12 @@
+{
+  "profile": "default",
+  "region": "sa-east-1",
+  "configuration": "Release",
+  "function-runtime": "dotnet8",
+  "function-memory-size": 512,
+  "function-timeout": 30,
+  "function-handler": "StoreApp.Api::StoreApp.Domain.LambdaEntryPoint::FunctionHandlerAsync",
+  "function-name": "storeapp-api",
+  "function-description": "StoreApp REST API",
+  "environment-variables": "ASPNETCORE_ENVIRONMENT=Production"
+}

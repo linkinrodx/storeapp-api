@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using StoreApp.Api.Data;
+using StoreApp.Api.Extensions;
 using StoreApp.Api.Mappings;
 using StoreApp.Api.Middleware;
 
@@ -30,6 +31,8 @@ public class Startup(IConfiguration configuration)
         services.AddCors(options =>
             options.AddDefaultPolicy(policy =>
                 policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
+
+        services.AddServices();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

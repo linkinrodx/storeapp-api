@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Models;
 using StoreApp.Domain.Data;
-using StoreApp.Domain.Extensions;
+//using StoreApp.Api.Extensions;
 using StoreApp.Domain.Mappings;
 using StoreApp.Domain.Middleware;
 
@@ -32,7 +31,7 @@ public class Startup(IConfiguration configuration)
             options.AddDefaultPolicy(policy =>
                 policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
 
-        services.AddServices();
+        //services.AddServices();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

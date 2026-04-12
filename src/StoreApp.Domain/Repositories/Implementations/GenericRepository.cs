@@ -23,7 +23,7 @@ public class GenericRepository<T> : IRepository<T> where T : class
         {
             var parameter = Expression.Parameter(typeof(T), "x");
             var propertyAccess = Expression.Property(parameter, property);
-            var constant = Expression.Constant(true);
+            var constant = Expression.Constant(true, property.PropertyType);
             var comparison = Expression.Equal(propertyAccess, constant);
             var lambda = Expression.Lambda<Func<T, bool>>(comparison, parameter);
             query = query.Where(lambda);
@@ -45,7 +45,7 @@ public class GenericRepository<T> : IRepository<T> where T : class
         {
             var parameter = Expression.Parameter(typeof(T), "x");
             var propertyAccess = Expression.Property(parameter, property);
-            var constant = Expression.Constant(true);
+            var constant = Expression.Constant(true, property.PropertyType);
             var comparison = Expression.Equal(propertyAccess, constant);
             var lambda = Expression.Lambda<Func<T, bool>>(comparison, parameter);
             query = query.Where(lambda);

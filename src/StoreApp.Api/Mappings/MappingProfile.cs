@@ -67,5 +67,31 @@ public class MappingProfile : AutoMapper.Profile
                 src.Product != null ? src.Product.Name : null,
                 src.Product != null ? src.Product.Price : (decimal?)null,
                 src.IsActive, src.CreatedAt));
+
+        // Mapeos para PagedResponse<T>
+        CreateMap<PagedResponse<Brand>, PagedResponse<BrandResponse>>()
+            .ConstructUsing((src, ctx) => new PagedResponse<BrandResponse>(
+                ctx.Mapper.Map<IEnumerable<BrandResponse>>(src.Data),
+                src.Total, src.Page, src.PageSize));
+
+        CreateMap<PagedResponse<Family>, PagedResponse<FamilyResponse>>()
+            .ConstructUsing((src, ctx) => new PagedResponse<FamilyResponse>(
+                ctx.Mapper.Map<IEnumerable<FamilyResponse>>(src.Data),
+                src.Total, src.Page, src.PageSize));
+
+        CreateMap<PagedResponse<Category>, PagedResponse<CategoryResponse>>()
+            .ConstructUsing((src, ctx) => new PagedResponse<CategoryResponse>(
+                ctx.Mapper.Map<IEnumerable<CategoryResponse>>(src.Data),
+                src.Total, src.Page, src.PageSize));
+
+        CreateMap<PagedResponse<Models.Product>, PagedResponse<ProductResponse>>()
+            .ConstructUsing((src, ctx) => new PagedResponse<ProductResponse>(
+                ctx.Mapper.Map<IEnumerable<ProductResponse>>(src.Data),
+                src.Total, src.Page, src.PageSize));
+
+        CreateMap<PagedResponse<Order>, PagedResponse<OrderResponse>>()
+            .ConstructUsing((src, ctx) => new PagedResponse<OrderResponse>(
+                ctx.Mapper.Map<IEnumerable<OrderResponse>>(src.Data),
+                src.Total, src.Page, src.PageSize));
     }
 }

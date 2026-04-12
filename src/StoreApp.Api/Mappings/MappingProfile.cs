@@ -1,0 +1,97 @@
+using AutoMapper;
+using StoreApp.Domain.DTOs.Responses;
+using StoreApp.Domain.Models;
+
+namespace StoreApp.Domain.Mappings;
+
+public class MappingProfile : AutoMapper.Profile
+{
+    public MappingProfile()
+    {
+        CreateMap<Brand, BrandResponse>()
+            .ConstructUsing(src => new BrandResponse(
+                src.Id, src.Name, src.Slug, src.Description,
+                src.IsFeatured, src.IsActive, src.CreatedAt));
+
+        CreateMap<Family, FamilyResponse>()
+            .ConstructUsing(src => new FamilyResponse(
+                src.Id, src.Label, src.Slug, src.SortOrder, src.IsActive, src.CreatedAt));
+
+        CreateMap<Category, CategoryResponse>()
+            .ConstructUsing(src => new CategoryResponse(
+                src.Id, src.Label, src.Slug, src.Icon, src.SortOrder, src.IsActive, src.CreatedAt));
+
+        CreateMap<Models.Product, ProductResponse>()
+            .ConstructUsing(src => new ProductResponse(
+                src.Id, src.Name, src.Price, src.Concentration, src.Description,
+                src.StockQuantity, src.IsActive,
+                src.BrandId, src.Brand != null ? src.Brand.Name : null,
+                src.FamilyId, src.Family != null ? src.Family.Label : null,
+                src.CategoryId, src.Category != null ? src.Category.Label : null,
+                src.CreatedAt));
+
+        CreateMap<Image, ImageResponse>()
+            .ConstructUsing(src => new ImageResponse(
+                src.Id, src.EntityId, src.EntityType, src.Url,
+                src.AltText, src.SortOrder, src.IsPrimary, src.IsActive));
+
+        CreateMap<Models.UserProfile, ProfileResponse>()
+            .ConstructUsing(src => new ProfileResponse(
+                src.Id, src.Email, src.FullName, src.Phone,
+                src.ShippingAddress, src.ShippingCity, src.ShippingReference, src.IsActive));
+
+        CreateMap<CartItem, CartItemResponse>()
+            .ConstructUsing(src => new CartItemResponse(
+                src.UserId, src.ProductId, src.Quantity,
+                src.Product != null ? src.Product.Name : null,
+                src.Product != null ? src.Product.Price : (decimal?)null,
+                src.IsActive));
+
+        CreateMap<OrderItem, OrderItemResponse>()
+            .ConstructUsing(src => new OrderItemResponse(
+                src.OrderId, src.ProductId, src.ProductName,
+                src.BrandName, src.UnitPrice, src.Quantity, src.Subtotal));
+
+        CreateMap<Order, OrderResponse>()
+            .ConstructUsing((src, ctx) => new OrderResponse(
+                src.Id, src.UserId, src.Status,
+                src.Subtotal, src.ShippingCost, src.Tax, src.Total,
+                src.ShippingAddress, src.ShippingCity, src.ShippingMethod,
+                src.PaymentMethod, src.PaymentStatus, src.PaymentReference,
+                src.IsActive, src.CreatedAt, src.ShippedAt, src.DeliveredAt,
+                ctx.Mapper.Map<IEnumerable<OrderItemResponse>>(src.Items)));
+
+        CreateMap<Wishlist, WishlistResponse>()
+            .ConstructUsing(src => new WishlistResponse(
+                src.UserId, src.ProductId,
+                src.Product != null ? src.Product.Name : null,
+                src.Product != null ? src.Product.Price : (decimal?)null,
+                src.IsActive, src.CreatedAt));
+
+        // Mapeos para PagedResponse<T>
+        CreateMap<PagedResponse<Brand>, PagedResponse<BrandResponse>>()
+            .ConstructUsing((src, ctx) => new PagedResponse<BrandResponse>(
+                ctx.Mapper.Map<IEnumerable<BrandResponse>>(src.Data),
+                src.Total, src.Page, src.PageSize));
+
+        CreateMap<PagedResponse<Family>, PagedResponse<FamilyResponse>>()
+            .ConstructUsing((src, ctx) => new PagedResponse<FamilyResponse>(
+                ctx.Mapper.Map<IEnumerable<FamilyResponse>>(src.Data),
+                src.Total, src.Page, src.PageSize));
+
+        CreateMap<PagedResponse<Category>, PagedResponse<CategoryResponse>>()
+            .ConstructUsing((src, ctx) => new PagedResponse<CategoryResponse>(
+                ctx.Mapper.Map<IEnumerable<CategoryResponse>>(src.Data),
+                src.Total, src.Page, src.PageSize));
+
+        CreateMap<PagedResponse<Models.Product>, PagedResponse<ProductResponse>>()
+            .ConstructUsing((src, ctx) => new PagedResponse<ProductResponse>(
+                ctx.Mapper.Map<IEnumerable<ProductResponse>>(src.Data),
+                src.Total, src.Page, src.PageSize));
+
+        CreateMap<PagedResponse<Order>, PagedResponse<OrderResponse>>()
+            .ConstructUsing((src, ctx) => new PagedResponse<OrderResponse>(
+                ctx.Mapper.Map<IEnumerable<OrderResponse>>(src.Data),
+                src.Total, src.Page, src.PageSize));
+    }
+}

@@ -7,6 +7,7 @@ on:
 
 env:
   AWS_REGION: sa-east-1
+  DOTNET_VERSION: '8.0.x'
 
 jobs:
   deploy:
@@ -18,15 +19,28 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.0.x'
+          dotnet-version: ${{ env.DOTNET_VERSION }}
 
       - name: Restore dependencies
-        run: dotnet restore src/StoreApp.Api.csproj
+        run: dotnet restore src/
 
-      - name: Build application
+      - name: Build solution
+        run: dotnet build src/StoreApp.Api.sln -c Release --no-restore
+
+      - name: Run tests
+        run: dotnet test src/StoreApp.Test/StoreApp.Test.csproj -c Release --no-build --logger trx
+
+      - name: Publish Lambda package
         run: |
-          dotnet publish src/StoreApp.Api.csproj -c Release -o ./publish
-          cd publish && zip -r ../function.zip . && cd ..
+          dotnet publish src/StoreApp.Api/StoreApp.Api.csproj \
+            -c Release \
+            -o ./publish \
+            --no-build \
+            --self-contained=false
+          
+          cd publish
+          zip -r ../function.zip . -x "*.pdb" "appsettings.Development.json"
+          cd ..
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -37,7 +51,8 @@ jobs:
 
       - name: Upload to S3
         run: |
-          aws s3 cp function.zip s3://${{ secrets.S3_BUCKET }}/storeapp-api/function.zip
+          aws s3 cp function.zip s3://${{ secrets.S3_BUCKET }}/storeapp-api/function.zip \
+            --region ${{ env.AWS_REGION }}
 
       - name: Update Lambda function
         run: |
@@ -45,4 +60,11 @@ jobs:
             --function-name ${{ secrets.LAMBDA_FUNCTION_NAME }} \
             --s3-bucket ${{ secrets.S3_BUCKET }} \
             --s3-key storeapp-api/function.zip \
+            --region ${{ env.AWS_REGION }} \
             --publish
+
+      - name: Verify Lambda update
+        run: |
+          aws lambda get-function-configuration \
+            --function-name ${{ secrets.LAMBDA_FUNCTION_NAME }} \
+            --region ${{ env.AWS_REGION }}

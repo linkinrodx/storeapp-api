@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using StoreApp.Domain.Data;
-//using StoreApp.Api.Extensions;
+using StoreApp.Api.Extensions;
 using StoreApp.Domain.Mappings;
 using StoreApp.Domain.Middleware;
 
@@ -31,17 +31,20 @@ public class Startup(IConfiguration configuration)
             options.AddDefaultPolicy(policy =>
                 policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
 
-        //services.AddServices();
+        services.AddServices(configuration);
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
-        var enableSwagger = Environment.GetEnvironmentVariable("ENABLE_SWAGGER") == "true";
+        var enableSwagger = env.IsDevelopment() || Environment.GetEnvironmentVariable("ENABLE_SWAGGER") == "true";
 
         if (enableSwagger)
         {
             app.UseSwagger();
-            app.UseSwaggerUI();
+            app.UseSwaggerUI(options =>
+            {
+                options.SwaggerEndpoint("/swagger/v1/swagger.json", "StoreApp API v1");
+            });
         }
 
         app.UseCors();

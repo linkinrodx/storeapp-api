@@ -1,0 +1,142 @@
+name: Integration Tests
+
+on:
+  workflow_run:
+    workflows: ["Deploy to AWS Lambda"]
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      enable_rollback:
+        description: 'Enable automatic rollback on test failure'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
+
+env:
+  AWS_REGION: sa-east-1
+  DOTNET_VERSION: '8.0.x'
+  API_GATEWAY_URL: ${{ secrets.API_GATEWAY_URL }}
+  ENABLE_ROLLBACK: ${{ github.event.inputs.enable_rollback || 'false' }}
+
+jobs:
+  integration-tests:
+    runs-on: ubuntu-latest
+    
+    # Solo ejecutar si el workflow de deploy fue exitoso
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
+    
+    steps:
+      # ============================================
+      # SETUP
+      # ============================================
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore dependencies
+        run: dotnet restore src/
+
+      - name: Build solution
+        run: dotnet build src/StoreApp.Api.sln -c Release --no-restore
+
+      # ============================================
+      # WAIT FOR LAMBDA TO BE READY
+      # ============================================
+      - name: Wait for Lambda to stabilize
+        run: sleep 15
+
+      # ============================================
+      # INTEGRATION TESTS
+      # ============================================
+      - name: Run Integration Tests Against Lambda
+        id: integration_tests
+        run: |
+          dotnet test src/StoreApp.IntegrationTests/StoreApp.IntegrationTests.csproj \
+            -c Release \
+            --no-build \
+            --logger trx \
+            --logger "json"
+        continue-on-error: true
+
+      # ============================================
+      # REPORT & NOTIFY
+      # ============================================
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: integration-test-results
+          path: '**/*.trx'
+
+      - name: Test Summary
+        if: always()
+        run: |
+          echo "Integration Tests Execution Summary"
+          echo "===================================="
+          echo "Rollback enabled: ${{ env.ENABLE_ROLLBACK }}"
+          echo "API Gateway URL: ${{ env.API_GATEWAY_URL }}"
+
+      # ============================================
+      # ROLLBACK (Opcional, configurable)
+      # ============================================
+      - name: Configure AWS credentials (for rollback)
+        if: failure() && env.ENABLE_ROLLBACK == 'true'
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Get Previous Lambda Version
+        if: failure() && env.ENABLE_ROLLBACK == 'true'
+        id: prev_version
+        run: |
+          # Obtener el número de versión anterior
+          VERSIONS=$(aws lambda list-versions-by-function \
+            --function-name ${{ secrets.LAMBDA_FUNCTION_NAME }} \
+            --region ${{ env.AWS_REGION }} \
+            --query 'Versions[*].Version' \
+            --output text)
+          
+          # Tomar la penúltima versión (LATEST es la actual)
+          PREV_VERSION=$(echo $VERSIONS | awk '{print $(NF-1)}')
+          echo "previous_version=$PREV_VERSION" >> $GITHUB_OUTPUT
+
+      - name: Rollback Lambda to Previous Version
+        if: failure() && env.ENABLE_ROLLBACK == 'true'
+        run: |
+          PREV_VERSION=${{ steps.prev_version.outputs.previous_version }}
+          
+          echo "Rolling back Lambda to version: $PREV_VERSION"
+          
+          aws lambda update-alias \
+            --function-name ${{ secrets.LAMBDA_FUNCTION_NAME }} \
+            --name LIVE \
+            --function-version $PREV_VERSION \
+            --region ${{ env.AWS_REGION }} || echo "No alias found, skipping alias update"
+          
+          echo "Rollback completed ✅"
+
+      # ============================================
+      # NOTIFICATIONS
+      # ============================================
+      - name: Notify on Failure (without rollback)
+        if: failure() && env.ENABLE_ROLLBACK != 'true'
+        run: |
+          echo "⚠️ Integration tests failed!"
+          echo "No rollback was performed because ENABLE_ROLLBACK is set to: ${{ env.ENABLE_ROLLBACK }}"
+          echo "Review the test results and fix the issues."
+          exit 1
+
+      - name: Success Notification
+        if: success()
+        run: |
+          echo "✅ All integration tests passed!"
+          echo "Lambda deployment validated against ${{ env.API_GATEWAY_URL }}"

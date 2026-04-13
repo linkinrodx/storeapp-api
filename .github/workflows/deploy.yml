@@ -10,9 +10,12 @@ env:
   DOTNET_VERSION: '8.0.x'
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
+      # ============================================
+      # SETUP
+      # ============================================
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -27,9 +30,21 @@ jobs:
       - name: Build solution
         run: dotnet build src/StoreApp.Api.sln -c Release --no-restore
 
-      - name: Run tests
-        run: dotnet test src/StoreApp.Test/StoreApp.Test.csproj -c Release --no-build --logger trx
+      # ============================================
+      # UNIT TESTS ONLY (before deploy)
+      # ============================================
+      - name: Run Unit Tests
+        run: |
+          dotnet test src/StoreApp.Test/StoreApp.Test.csproj \
+            -c Release \
+            --no-build \
+            --logger trx \
+            --filter "FullyQualifiedName~Services"
+        continue-on-error: false
 
+      # ============================================
+      # BUILD & PUBLISH LAMBDA
+      # ============================================
       - name: Publish Lambda package
         run: |
           dotnet publish src/StoreApp.Api/StoreApp.Api.csproj \
@@ -42,6 +57,9 @@ jobs:
           zip -r ../function.zip . -x "*.pdb" "appsettings.Development.json"
           cd ..
 
+      # ============================================
+      # AWS DEPLOY
+      # ============================================
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:

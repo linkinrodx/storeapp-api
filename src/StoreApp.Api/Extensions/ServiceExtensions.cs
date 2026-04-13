@@ -12,10 +12,19 @@ public static class ServiceExtensions
 {
     public static IServiceCollection AddServices(this IServiceCollection services, IConfiguration configuration)
     {
-        // Registrar DbContext
-        var connectionString = configuration.GetConnectionString("DefaultConnection")
-            ?? Environment.GetEnvironmentVariable("DATABASE_URL")
-            ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+        // Registrar DbContext - priorizar variable de ambiente para Lambda
+        var connectionString = Environment.GetEnvironmentVariable("DATABASE_URL");
+        
+        if (string.IsNullOrEmpty(connectionString))
+        {
+            connectionString = configuration.GetConnectionString("DefaultConnection");
+        }
+
+        if (string.IsNullOrEmpty(connectionString))
+        {
+            throw new InvalidOperationException(
+                "Connection string not found. Set DATABASE_URL environment variable or configure 'DefaultConnection' in appsettings.json");
+        }
 
         services.AddDbContext<AppDbContext>(options =>
             options.UseNpgsql(connectionString, npgsql =>

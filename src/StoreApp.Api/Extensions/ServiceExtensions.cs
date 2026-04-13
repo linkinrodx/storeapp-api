@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using StoreApp.Domain.Data;
 using StoreApp.Domain.Mappings;
+using StoreApp.Domain.Middleware;
 using StoreApp.Domain.Repositories.Implementations;
 using StoreApp.Domain.Repositories.Interfaces;
 using StoreApp.Domain.Services.Implementations;
@@ -10,6 +11,10 @@ namespace StoreApp.Api.Extensions;
 
 public static class ServiceExtensions
 {
+    /// <summary>
+    /// Registra DbContext, AutoMapper, repositorios y servicios de negocio.
+    /// Prioriza la variable de ambiente DATABASE_URL para Lambda.
+    /// </summary>
     public static IServiceCollection AddServices(this IServiceCollection services, IConfiguration configuration)
     {
         // Registrar DbContext - priorizar variable de ambiente para Lambda
@@ -32,9 +37,10 @@ public static class ServiceExtensions
                 npgsql.CommandTimeout(30);
                 npgsql.EnableRetryOnFailure(3);
             }));
+
         services.AddAutoMapper(config => config.AddProfile<MappingProfile>());
 
-        // Registrar repositorio genérico
+        // Registrar repositorio genérico y servicios
         services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
         services.AddScoped<IBrandService, BrandService>();
         services.AddScoped<IFamilyService, FamilyService>();
@@ -47,5 +53,24 @@ public static class ServiceExtensions
         services.AddScoped<IWishlistService, WishlistService>();
 
         return services;
+    }
+
+    /// <summary>
+    /// Configura el pipeline de middleware de la aplicación.
+    /// </summary>
+    public static void ConfigureApplicationPipeline(this IApplicationBuilder app, IWebHostEnvironment env)
+    {
+        var enableSwagger = env.IsDevelopment() || Environment.GetEnvironmentVariable("ENABLE_SWAGGER") == "true";
+
+        if (enableSwagger)
+        {
+            app.UseSwagger();
+            app.UseSwaggerUI();
+        }
+
+        app.UseCors();
+        app.UseMiddleware<ExceptionMiddleware>();
+        app.UseRouting();
+        app.UseEndpoints(endpoints => endpoints.MapControllers());
     }
 }

@@ -63,13 +63,6 @@ jobs:
             --region ${{ env.AWS_REGION }} \
             --publish
 
-      - name: Configure Lambda environment variables
-        run: |
-          aws lambda update-function-configuration \
-            --function-name ${{ secrets.LAMBDA_FUNCTION_NAME }} \
-            --environment Variables="{DATABASE_URL=${{ secrets.DATABASE_URL }},ENABLE_SWAGGER=true}" \
-            --region ${{ env.AWS_REGION }}
-
       - name: Verify Lambda update
         run: |
           aws lambda get-function-configuration \

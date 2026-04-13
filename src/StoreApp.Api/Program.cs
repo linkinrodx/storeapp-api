@@ -35,10 +35,7 @@ public class Program
         if (enableSwagger)
         {
             app.UseSwagger();
-            app.UseSwaggerUI(options =>
-            {
-                options.SwaggerEndpoint("/swagger/v1/swagger.json", "StoreApp API v1");
-            });
+            app.UseSwaggerUI();
         }
 
         app.MapControllers();

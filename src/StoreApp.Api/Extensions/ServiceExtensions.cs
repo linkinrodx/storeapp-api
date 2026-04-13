@@ -12,10 +12,14 @@ namespace StoreApp.Api.Extensions;
 public static class ServiceExtensions
 {
     /// <summary>
-    /// Registra DbContext, AutoMapper, repositorios y servicios de negocio.
-    /// Prioriza la variable de ambiente DATABASE_URL para Lambda.
+    /// Registra TODOS los servicios de la aplicación:
+    /// - DbContext (prioriza DATABASE_URL para Lambda)
+    /// - AutoMapper
+    /// - Repositorios y servicios de negocio
+    /// - CORS
+    /// - Controllers y Swagger
     /// </summary>
-    public static IServiceCollection AddServices(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration configuration)
     {
         // Registrar DbContext - priorizar variable de ambiente para Lambda
         var connectionString = Environment.GetEnvironmentVariable("DATABASE_URL");
@@ -40,7 +44,23 @@ public static class ServiceExtensions
 
         services.AddAutoMapper(config => config.AddProfile<MappingProfile>());
 
-        // Registrar repositorio genérico y servicios
+        // Registrar CORS
+        services.AddCors(options =>
+        {
+            options.AddPolicy("AllowAll", policy =>
+            {
+                policy.AllowAnyOrigin()
+                      .AllowAnyMethod()
+                      .AllowAnyHeader();
+            });
+        });
+
+        // Registrar controllers y endpoints
+        services.AddControllers();
+        services.AddEndpointsApiExplorer();
+        services.AddSwaggerGen();
+
+        // Registrar repositorio genérico y servicios de negocio
         services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
         services.AddScoped<IBrandService, BrandService>();
         services.AddScoped<IFamilyService, FamilyService>();
@@ -56,7 +76,11 @@ public static class ServiceExtensions
     }
 
     /// <summary>
-    /// Configura el pipeline de middleware de la aplicación.
+    /// Configura el pipeline de middleware de la aplicación:
+    /// - Swagger (si está habilitado)
+    /// - CORS
+    /// - Exception Handling
+    /// - Routing
     /// </summary>
     public static void ConfigureApplicationPipeline(this IApplicationBuilder app, IWebHostEnvironment env)
     {
@@ -68,7 +92,7 @@ public static class ServiceExtensions
             app.UseSwaggerUI();
         }
 
-        app.UseCors();
+        app.UseCors("AllowAll");
         app.UseMiddleware<ExceptionMiddleware>();
         app.UseRouting();
         app.UseEndpoints(endpoints => endpoints.MapControllers());

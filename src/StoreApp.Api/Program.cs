@@ -8,30 +8,12 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        // Agregar CORS
-        builder.Services.AddCors(options =>
-        {
-            options.AddPolicy("AllowAll", policy =>
-            {
-                policy.AllowAnyOrigin()
-                      .AllowAnyMethod()
-                      .AllowAnyHeader();
-            });
-        });
-
-        builder.Services.AddControllers();
-        builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
-
         // Registrar todos los servicios de la aplicación
-        builder.Services.AddServices(builder.Configuration);
+        builder.Services.AddApplicationServices(builder.Configuration);
 
         var app = builder.Build();
 
-        // Usar CORS
-        app.UseCors("AllowAll");
-
-        // Configurar pipeline de middleware
+        // Configurar el pipeline de middleware
         app.ConfigureApplicationPipeline(app.Environment);
 
         app.Run();

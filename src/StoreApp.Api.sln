@@ -2,13 +2,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.2.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StoreApp.Test", "StoreApp.Test\StoreApp.Test.csproj", "{937708BF-1FBD-477F-810E-92EB29327A8B}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StoreApp.Api", "StoreApp.Api\StoreApp.Api.csproj", "{3191B71B-C333-440A-02C7-B8F6DFACA2B5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StoreApp.Domain", "StoreApp.Domain\StoreApp.Domain.csproj", "{C586EE4C-3625-4EB0-ACC1-8E950BA20241}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StoreApp.IntegrationTests", "StoreApp.IntegrationTests\StoreApp.IntegrationTests.csproj", "{101C800A-A30C-CC9D-CAD5-827FFDFA5274}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StoreApp.UnitTests", "StoreApp.UnitTests\StoreApp.UnitTests.csproj", "{C16B6A40-87EF-64F0-E39A-3AB27DB3496C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -16,10 +16,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{937708BF-1FBD-477F-810E-92EB29327A8B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{937708BF-1FBD-477F-810E-92EB29327A8B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{937708BF-1FBD-477F-810E-92EB29327A8B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{937708BF-1FBD-477F-810E-92EB29327A8B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3191B71B-C333-440A-02C7-B8F6DFACA2B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3191B71B-C333-440A-02C7-B8F6DFACA2B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3191B71B-C333-440A-02C7-B8F6DFACA2B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -32,6 +28,10 @@ Global
 		{101C800A-A30C-CC9D-CAD5-827FFDFA5274}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{101C800A-A30C-CC9D-CAD5-827FFDFA5274}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{101C800A-A30C-CC9D-CAD5-827FFDFA5274}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C16B6A40-87EF-64F0-E39A-3AB27DB3496C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C16B6A40-87EF-64F0-E39A-3AB27DB3496C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C16B6A40-87EF-64F0-E39A-3AB27DB3496C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C16B6A40-87EF-64F0-E39A-3AB27DB3496C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

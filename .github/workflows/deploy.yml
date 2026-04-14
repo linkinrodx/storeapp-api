@@ -35,7 +35,7 @@ jobs:
       # ============================================
       - name: Run Unit Tests
         run: |
-          dotnet test src/StoreApp.Test/StoreApp.Test.csproj \
+          dotnet test src/StoreApp.UnitTests/StoreApp.UnitTests.csproj \
             -c Release \
             --no-build \
             --logger trx \
